@@ -13,7 +13,7 @@
 
   function connect_to_chat_firebase(){
     /* Include your Firebase link here!*/
-    fb_instance = new Firebase("https://glaring-fire-922.firebaseio.com/");
+    fb_instance = new Firebase("https://torid-fire-1920.firebaseio.com/");
 
     // generate new chatroom id or use existing id
     var url_segments = document.location.href.split("/#");
