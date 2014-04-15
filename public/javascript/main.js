@@ -5,6 +5,8 @@
 
   var cur_video_blob = null;
   var fb_instance;
+  var new_video_blob = null;
+
 
   $(document).ready(function(){
     connect_to_chat_firebase();
@@ -47,8 +49,9 @@
     $("#waiting").remove();
 
     // bind submission box
-    $("#submission input").keydown(function( event ) {
-      if (event.which == 13) {
+    /*$("#submission input").keypress(function( event ) {
+      if (event.which == 108) {
+        console.log("enter key pressed")
         if(has_emotions($(this).val())){
           fb_instance_stream.push({m:username+": " +$(this).val(), v:cur_video_blob, c: my_color});
         }else{
@@ -57,7 +60,57 @@
         $(this).val("");
         scroll_to_bottom(0);
       }
+    });*/
+    var keydown = 0
+    var timerID = 0
+
+    $("#submission input").keypress(function( event ) {
+      if ((event.which == 108 || event.which == 40 || event.which==41)&&keydown==0) {
+        console.log("important key pressed")
+        keydown = 1
+        if(has_emotions($(this).val())){
+          //fb_instance_stream.push({m:"hold at least 3 seconds to record"})
+//start animating
+          
+          document.getElementById("gauge").style.opacity = "1";
+          document.getElementById("red_square").style.width = "160px";
+
+
+          timerID = setTimeout(function(){
+            new_video_blob = cur_video_blob
+            //finish
+            document.getElementById("gauge").style.opacity = "0";
+            document.getElementById("red_square").style.width = "0px"
+
+            document.getElementById("complete_text").style.opacity = "1";
+
+          },5000)
+        }
+          //fb_instance_stream.push({m:username+": " +$(this).val(), c: my_color});
+      } else if(keydown==1) {
+        event.preventDefault()
+      }
+      if (event.which ==13) {
+        fb_instance_stream.push({m:username+": " +$(this).val(), v:new_video_blob, c: my_color})
+        $(this).val("");
+        document.getElementById("complete_text").style.opacity = "0";
+        new_video_blob = null
+      } 
+      scroll_to_bottom(0);
+
     });
+
+    $("#submission input").keyup(function( event ) {
+      if (keydown == 1) {
+        console.log("whut")
+        clearTimeout(timerID);
+        document.getElementById("gauge").style.opacity = "0";
+        document.getElementById("red_square").style.width = "0px"
+      }
+      keydown = 0
+    }); 
+    
+
 
     // scroll to bottom in case there is already content
     scroll_to_bottom(1300);
@@ -165,15 +218,24 @@
 
   // check to see if a message qualifies to be replaced with video.
   var has_emotions = function(msg){
-    var options = ["lol",":)",":("];
+    var options = ["lo",":",":"];
     for(var i=0;i<options.length;i++){
-      if(msg.indexOf(options[i])!= -1){
+      if(msg.indexOf(options[i], msg.length-3)!= -1){
         return true;
       }
     }
     return false;
   }
 
+  // check to see if a message qualifies to be replaced with video.
+  /*var has_lol = function(msg){
+    console.log(msg);
+    options = "lo"  
+    if(msg.indexOf(options)!= -1){
+      return true;
+    }
+    return false;
+  }*/
 
   // some handy methods for converting blob to base 64 and vice versa
   // for performance bench mark, please refer to http://jsperf.com/blob-base64-conversion/5

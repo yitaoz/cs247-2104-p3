@@ -14,6 +14,31 @@ a {
 #webcam_stream video {
   border: 2px solid #dcc;
 }
+#gauge {
+  position: fixed;
+  top :135px;
+  right: 10px;
+  width: 160px;
+  opacity: 0;
+  color:red;
+  
+}
+
+#complete_text {
+  position: fixed;
+  top :135px;
+  right: 10px;
+  width: 160px;
+  opacity: 0;
+  color:red;
+}
+
+#gauge img {
+  width:0px;
+  height:10px;
+  transition: width 5s linear;
+}
+
 #second_counter {
   position: fixed;
   top: 20px;
